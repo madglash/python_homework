@@ -1,54 +1,65 @@
-
 import os
 import csv
 
-csvpath = os.path.join('PyPoll', 'Resources','election_data.csv')
+csvpath = os.path.join('PyBank', 'Resources','budget_data.csv')
 
 with open(csvpath, newline='') as csvfile:
-    file = open('MG_poll_results.txt','w') 
-#loop to count all rows/votes
+
+    # CSV reader specifies delimiter and variable that holds contents
     csvreader = csv.reader(csvfile, delimiter=',')
-    votecount = 0
-    allVotes = []
-    candidateList = [] 
+
+    # Read the header row first
+    csv_header = next(csvreader)
     
+    # Read each row of data after the header
+    monthcount = 0
+    total = 0
     for row in csvreader:
-        votecount += 1 
-        allVotes.append(row[2])
-                      
-        if row[2] not in candidateList: 
-            candidateList.append(row[2])    
-    print("Election Results")
-    file.write("Election Results")
+        monthcount = monthcount + 1
+        total += int(row[1])
     
-    print("----------------------")
-    file.write(("----------------------"))
+    #Number of months.
+    print(monthcount)
+    #Sum of profits/losses.
+    print(total)
+
+    previous = 0
+    current = 0
     
-    print(f'Total Votes: {votecount}')
+    differencesList = []
+    monthsList=[]
     
-    file.write((f'Total Votes: {votecount}'))
-    
-#if name = candidate, add to their list
-    winningVotes = 0
-    
-    for x in candidateList: 
-        
-        tally = allVotes.count(x)
-        
-        if (x == "Candidate"):
-            print("----------------------")
-            file.write("----------------------")
+    for row in csvreader: 
+        if(row[1] == "Profit/Losses"):
+            previous = 0
         else:
-            percent = round((tally/votecount)*100, 3)
-            print(f'{x}: {percent}% ({tally})')
-            file.write((f'{x}: {percent}% ({tally})'))
-        
-        if tally > winningVotes:
-            winningVotes = tally
-            winner = x
+            current = int(row[1])
+            myDiff = (current - previous)
+            differencesList.append(myDiff)
+            monthsList.append(row[0])
+            previous = current
+      
+    averageChange = sum(differencesList)/ monthcount
+    print(differencesList)
+    print(monthsList)
+
+  #  DLmax = differencesList.index(max(differencesList))
+          
+   # DLmin = differencesList.index(min(differencesList))
     
-print("----------------------")
-file.write("----------------------")
-                       
-print(f'Winner: {winner}')
-file.write((f'Winner: {winner}'))
+    #print(f'${sum(differencesList)}')
+    #print(sum(differencesList))
+   # print(len(differencesList))
+  #  print(sum(differencesList) / (len(differencesList)-1))
+    
+  #  print(monthsList)
+
+print("Financial Analysis")
+print("-----------------------------")
+
+print("Total Months: " + str(monthcount))
+print("Total: $" + str(total))
+print("Average Change: $" + str(round(averageChange, 2)))
+
+#print("Greatest Increase in Profits: " + monthsList[DLmax] + " $" + str(max(differencesList)))
+#print("Greatest Decrease in Profits: " + monthsList[DLmin] + " $" + str(min(differencesList)))
